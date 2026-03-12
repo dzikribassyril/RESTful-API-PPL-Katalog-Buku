@@ -1,0 +1,27 @@
+{
+  "name": "restful-api-ppl",
+  "version": "1.0.0",
+  "description": "RESTful API Katalog Buku - Tugas PPL",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed": "node src/db/seed.js",
+    "test": "jest --forceExit --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 10000
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.3",
+    "supertest": "^6.3.4"
+  }
+}
