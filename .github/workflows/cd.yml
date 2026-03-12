@@ -1,0 +1,36 @@
+name: CD - Deploy ke Debian Server
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: SSH Deploy to Debian
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH ke Debian Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key:      ${{ secrets.SSH_PRIVATE_KEY }}
+          port:     ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+
+            # Pindah ke direktori project
+            cd /var/www/RESTful-API-PPL
+
+            # Pull perubahan terbaru dari branch main
+            git pull origin main
+
+            # Rebuild dan restart container
+            docker compose down
+            docker compose up -d --build
+
+            echo "✅ Deployment berhasil! API berjalan di port 3000."
