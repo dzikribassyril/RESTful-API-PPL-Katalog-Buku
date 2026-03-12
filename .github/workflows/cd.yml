@@ -22,15 +22,8 @@ jobs:
           port:     ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -e
-
-            # Pindah ke direktori project
-            cd /var/www/RESTful-API-PPL
-
-            # Pull perubahan terbaru dari branch main
+            cd /var/www/RESTful-API-PPL-Katalog-Buku
             git pull origin main
-
-            # Rebuild dan restart container
             docker compose down
             docker compose up -d --build
-
             echo "✅ Deployment berhasil! API berjalan di port 3000."
