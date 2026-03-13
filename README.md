@@ -1,18 +1,18 @@
 # RESTful API Katalog Buku
 
-![CI](https://github.com/dzikribassyril/RESTful-API-PPL/actions/workflows/ci.yml/badge.svg)
-![CS](https://github.com/dzikribassyril/RESTful-API-PPL/actions/workflows/cs.yml/badge.svg)
-![CD](https://github.com/dzikribassyril/RESTful-API-PPL/actions/workflows/cd.yml/badge.svg)
+![CI](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/ci.yml/badge.svg)
+![CS](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/cs.yml/badge.svg)
+![CD](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/cd.yml/badge.svg)
 
 ---
 
-## 📋 Deskripsi Project
+## Deskripsi Project
 
-API ini memungkinkan pengguna untuk mengelola data katalog buku (CRUD) mencakup informasi ISBN, judul, pengarang, penerbit, tahun terbit, genre, dan stok. Data disimpan menggunakan SQLite (file-based) sehingga tidak memerlukan server database terpisah.
+API ini memungkinkan pengguna untuk mengelola data katalog buku (CRUD) mencakup informasi ISBN, judul, pengarang, penerbit, tahun terbit, genre, dan stok.
 
-## 📡 Dokumentasi API
+## Dokumentasi API
 
-Base URL: `http://localhost:3000/api/books`
+Base URL: `http://ppl.dzikribassyril.me/api/books`
 
 ### Endpoints
 
@@ -173,13 +173,10 @@ Base URL: `http://localhost:3000/api/books`
 ```
 main
   └── develop
-        ├── feature/setup-project
-        ├── feature/database-sqlite
-        ├── feature/crud-books
-        ├── feature/unit-tests
-        ├── feature/docker
+        ├── feature/book-api
+        ├── feature/database-setup
         ├── feature/github-actions
-        └── feature/dokumentasi
+        └── feature/testing
 ```
 
 ### Conventional Commits
@@ -222,14 +219,7 @@ docs: add complete API documentation to README
 - **Tool:** [Trivy](https://github.com/aquasecurity/trivy) oleh Aqua Security
 - **Fungsi:** Memindai kerentanan keamanan pada dependencies (filesystem) dan base image Docker. Hasil diunggah ke tab **Security → Code Scanning** di GitHub.
 
-### CD - Deploy ke Debian (`cd.yml`)
+### CD - Deploy ke Server (`cd.yml`)
 - **Trigger:** Push ke `main` saja
 - **Tool:** [appleboy/ssh-action](https://github.com/appleboy/ssh-action)
-- **Fungsi:** Deploy otomatis ke server Debian via SSH. Melakukan `git pull` + `docker compose up -d --build`.
-- **Secrets yang dibutuhkan (Settings → Secrets → Actions):**
-  | Secret | Contoh | Keterangan |
-  |--------|--------|------------|
-  | `SSH_HOST` | `192.168.1.1` | IP/domain server |
-  | `SSH_USER` | `debian` | Username SSH |
-  | `SSH_PRIVATE_KEY` | `-----BEGIN...` | Private key SSH |
-  | `SSH_PORT` | `22` | Port SSH (opsional) |
+- **Fungsi:** Deploy otomatis ke server. Melakukan `git pull` + `docker compose up -d --build`.
