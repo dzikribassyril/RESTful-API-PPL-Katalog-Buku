@@ -6,24 +6,16 @@ on:
 
 jobs:
   deploy:
-    name: SSH Deploy to Debian
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
       - name: Checkout kode
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH ke Debian Server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host:     ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key:      ${{ secrets.SSH_PRIVATE_KEY }}
-          port:     ${{ secrets.SSH_PORT || 22 }}
-          script: |
-            set -e
-            cd /var/www/RESTful-API-PPL-Katalog-Buku
-            git pull origin main
-            docker compose down
-            docker compose up -d --build
-            echo "✅ Deployment berhasil! API berjalan di port 3000."
+      - name: Deploy langsung di server
+        run: |
+          set -e
+          cd /var/www/RESTful-API-PPL-Katalog-Buku
+          git pull origin main
+          docker compose down
+          docker compose up -d --build
+          echo "Deployment berhasil! API berjalan di port 3000."
