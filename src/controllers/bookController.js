@@ -65,7 +65,9 @@ const createBook = withDb(async (req, res) => {
   try {
     const result = run(
       'INSERT INTO books (isbn, judul, pengarang, penerbit, tahun_terbit, genre, stok) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [isbn, judul, pengarang, penerbit, Number(tahun_terbit), genre || null, stok !== undefined ? Number(stok) : 0]
+      [isbn, judul, pengarang, penerbit, Number(tahun_terbit), genre || null, stok !== undefined ? Number(stok) : 0],
+      'isbn',
+      isbn
     );
     const newBook = queryOne('SELECT * FROM books WHERE id = ?', [result.lastInsertRowid]);
     return success(res, newBook, 201, 'Buku berhasil ditambahkan.');
