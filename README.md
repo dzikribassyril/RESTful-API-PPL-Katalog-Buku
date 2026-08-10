@@ -1,58 +1,82 @@
-# RESTful API Katalog Buku
+# Book Catalog REST API
 
-![CI](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/ci.yml/badge.svg)
-![CS](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/cs.yml/badge.svg)
-![CD](https://github.com/dzikribassyril/RESTful-API-PPL-Katalog-Buku/actions/workflows/cd.yml/badge.svg)
+A RESTful API for managing a book catalog — ISBN, title, author, publisher, year, genre, and stock — with unit tests, a security-scan workflow, and automated deployment.
 
----
+[![CI](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/ci.yml/badge.svg)](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/ci.yml)
+[![Security Scan](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/cs.yml/badge.svg)](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/cs.yml)
+[![CD](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/cd.yml/badge.svg)](https://github.com/dzikribassyril/book-catalog-rest-api/actions/workflows/cd.yml)
+![Node](https://img.shields.io/badge/Node.js-20-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Deskripsi Project
+## Features
 
-API ini memungkinkan pengguna untuk mengelola data katalog buku (CRUD) mencakup informasi ISBN, judul, pengarang, penerbit, tahun terbit, genre, dan stok.
+- Full CRUD: ISBN, title, author, publisher, publication year, genre, and stock
+- Search books by title or author via `?search=`
+- File-backed SQLite storage (sql.js WASM), persisted on every write
+- Unit tests with Jest + Supertest, enforced in CI
+- Security-scan workflow and self-hosted deploy workflow
+- Docker image with a named volume so data survives restarts
 
-## Dokumentasi API
+## Tech Stack
 
-Base URL: `http://ppl.dzikribassyril.me/api/books`
+| Area | Technology |
+|---|---|
+| Runtime | Node.js 20 |
+| Framework | Express 4 |
+| Database | SQLite via sql.js (WASM), file-backed |
+| Testing | Jest, Supertest |
+| CI/CD | GitHub Actions (unit test, security scan, deploy) |
+| Container | Docker + Docker Compose |
 
-### Endpoints
+## Project Structure
 
-| Method | Endpoint | Deskripsi |
-|--------|----------|-----------|
-| GET | `/api/books` | Ambil semua buku |
-| GET | `/api/books/:id` | Ambil buku berdasarkan ID |
-| POST | `/api/books` | Tambah buku baru |
-| PUT | `/api/books/:id` | Update data buku |
-| DELETE | `/api/books/:id` | Hapus buku |
-
----
-
-### GET `/api/books`
-
-**Respons Sukses (200):**
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "isbn": "978-0-7432-7356-5",
-      "judul": "The Great Gatsby",
-      "pengarang": "F. Scott Fitzgerald",
-      "penerbit": "Scribner",
-      "tahun_terbit": 1925,
-      "genre": "Novel",
-      "stok": 10,
-      "created_at": "2024-01-01 00:00:00"
-    }
-  ]
-}
+```text
+.
+├── src/
+│   ├── server.js                    # Entry point (port from PORT, default 3000)
+│   ├── routes/books.js              # /api/books routes
+│   ├── controllers/bookController.js
+│   └── db/
+│       ├── index.js                 # sql.js init, schema, persistence
+│       └── seed.js                  # Seed data (npm run seed)
+├── tests/books.test.js              # Supertest integration tests
+├── .github/workflows/               # ci.yml, cs.yml (security), cd.yml (deploy)
+├── Dockerfile
+└── docker-compose.yml
 ```
 
----
+## Getting Started
 
-### GET `/api/books/:id`
+### Local
 
-**Respons Sukses (200):**
+```bash
+npm install
+npm run seed      # optional: load the sample catalog
+npm run dev       # nodemon, or: npm start
+```
+
+### Docker
+
+```bash
+docker compose up --build
+```
+
+The API listens on `http://localhost:3000`.
+
+## API Reference
+
+All responses use a `status` / `data` envelope.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/books` | List all books, or `?search=keyword` to filter by title or author |
+| GET | `/api/books/:id` | Get one book |
+| POST | `/api/books` | Add a book |
+| PUT | `/api/books/:id` | Update a book |
+| DELETE | `/api/books/:id` | Delete a book |
+
+Example response (`GET /api/books/1`):
+
 ```json
 {
   "status": "success",
@@ -70,156 +94,12 @@ Base URL: `http://ppl.dzikribassyril.me/api/books`
 }
 ```
 
-**Respons Error (404):**
-```json
-{
-  "status": "error",
-  "message": "Buku tidak ditemukan."
-}
+## Tests
+
+```bash
+npm test
 ```
 
----
+## License
 
-### POST `/api/books`
-
-**Request Body:**
-```json
-{
-  "isbn": "978-0-1234-5678-9",
-  "judul": "Judul Buku Baru",
-  "pengarang": "Nama Pengarang",
-  "penerbit": "Nama Penerbit",
-  "tahun_terbit": 2024,
-  "genre": "Fiksi",
-  "stok": 10
-}
-```
-
-**Respons Sukses (201):**
-```json
-{
-  "status": "success",
-  "message": "Buku berhasil ditambahkan.",
-  "data": {
-    "id": 16,
-    "isbn": "978-0-1234-5678-9",
-    "judul": "Judul Buku Baru",
-    "pengarang": "Nama Pengarang",
-    "penerbit": "Nama Penerbit",
-    "tahun_terbit": 2024,
-    "genre": "Fiksi",
-    "stok": 10,
-    "created_at": "2024-01-01 00:00:00"
-  }
-}
-```
-
-**Respons Error (400) - Field wajib kosong:**
-```json
-{
-  "status": "error",
-  "message": "Field isbn, judul, pengarang, penerbit, dan tahun_terbit wajib diisi."
-}
-```
-
-**Respons Error (409) - ISBN duplikat:**
-```json
-{
-  "status": "error",
-  "message": "ISBN '978-0-1234-5678-9' sudah terdaftar."
-}
-```
-
----
-
-### PUT `/api/books/:id`
-
-**Request Body** (semua field opsional, hanya field yang dikirim yang diupdate):
-```json
-{
-  "stok": 20,
-  "genre": "Klasik"
-}
-```
-
-**Respons Sukses (200):**
-```json
-{
-  "status": "success",
-  "message": "Buku berhasil diperbarui.",
-  "data": { "id": 1, "stok": 20, "genre": "Klasik", "..." : "..." }
-}
-```
-
----
-
-### DELETE `/api/books/:id`
-
-**Respons Sukses (200):**
-```json
-{
-  "status": "success",
-  "message": "Buku dengan id 1 berhasil dihapus.",
-  "data": null
-}
-```
-
----
-
-## Alur Kerja Git
-
-### Strategi Branch
-
-```
-main
-  └── develop
-        ├── feature/book-api
-        ├── feature/database-setup
-        ├── feature/github-actions
-        └── feature/testing
-```
-
-### Conventional Commits
-
-Format: `<type>: <deskripsi singkat>`
-
-| Type | Kegunaan |
-|------|----------|
-| `feat` | Fitur baru |
-| `fix` | Perbaikan bug |
-| `test` | Menambah/memperbaiki test |
-| `ci` | Perubahan konfigurasi CI/CD |
-| `chore` | Konfigurasi, tooling |
-| `docs` | Dokumentasi |
-
-**Contoh commit:**
-```
-feat: add SQLite connection and books table migration
-feat: add GET /api/books endpoint
-feat: add POST /api/books with ISBN validation
-test: add unit tests for books CRUD endpoints
-ci: add GitHub Actions CI workflow
-ci: add Trivy security scan workflow
-ci: add SSH deployment workflow to Debian server
-chore: add Dockerfile and docker-compose
-docs: add complete API documentation to README
-```
-
----
-
-## Status GitHub Actions
-
-### CI - Unit Test (`ci.yml`)
-- **Trigger:** Push & Pull Request ke `main` dan `develop`
-- **Tool:** Jest + Supertest
-- **Fungsi:** Menjalankan semua unit test secara otomatis, memastikan tidak ada kode rusak yang masuk ke branch utama.
-
-### CS - Security Scan (`cs.yml`)
-- **Trigger:** Push & Pull Request ke `main` dan `develop`
-- **Tool:** [Trivy](https://github.com/aquasecurity/trivy) oleh Aqua Security
-- **Fungsi:** Memindai kerentanan keamanan pada dependencies (filesystem) dan base image Docker. Hasil diunggah ke tab **Security → Code Scanning** di GitHub.
-
-### CD - Deploy ke Server (`cd.yml`)
-- **Trigger:** Push ke `main` saja
-- **Tool:** [appleboy/ssh-action](https://github.com/appleboy/ssh-action)
-- **Fungsi:** Deploy otomatis ke server. Melakukan `git pull` + `docker compose up -d --build`.
+MIT — see [LICENSE](LICENSE).
